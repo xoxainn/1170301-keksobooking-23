@@ -25,11 +25,7 @@ getRandomInRangeFine(2, 20, 6);
 
 const ADVERTS_NUMBER = 10;
 const avatarNumbers = ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10'];
-const avatars = [];
-avatarNumbers.forEach((value, index) => {
-  avatars[index] = `img/avatars/user${value}.png`;
-  return avatars;
-});
+const avatars = avatarNumbers.map((value) => `img/avatars/user${value}.png`);
 const TYPE = ['palace', 'flat', 'house', 'bungalow', 'hotel'];
 const CHECKIN = ['12:00', '13:00', '14:00'];
 const CHECKOUT = ['12:00', '13:00', '14:00'];
@@ -39,32 +35,69 @@ const PHOTOS = ['https://assets.htmlacademy.ru/content/intensive/javascript-1/ke
   'https://assets.htmlacademy.ru/content/intensive/javascript-1/keksobooking/claire-rendall-b6kAwr1i0Iw.jpg'];
 
 
-const getRandomArrayElement = function(elements){
+const getRandomArrayElement = function (elements) {
   return elements[getRandomInRangeInteger(0, elements.length - 1)];
 };
 
-const createAdvert = function(){
+const getFeatures = function () {
+  const featuresArr = [];
+  // eslint-disable-next-line id-length
+  for (let i = 0; i < getRandomInRangeInteger(1, FEATURES.length - 1); i++) {
+    if (!featuresArr.includes(FEATURES[i])) {
+      featuresArr.push(FEATURES[i]);
+    } else {
+      continue;
+    }
+  }
+  return featuresArr;
+};
+
+const createAdvert = function () {
+  const locationLat = getRandomInRangeFine(35.65000, 35.70000, 5);
+  const locationLng = getRandomInRangeFine(139.70000, 139.80000, 5);
+  function getAddress() {
+    return `${locationLat}, ${locationLng}`;
+  }
   return {
-    avatar: getRandomArrayElement(avatars),
+    author: {
+      avatar: getRandomArrayElement(avatars),
+    },
     offer: {
       title: 'Угрлы-бущшаитм',
-      address: 'location.lat,location.lng',
+      address: getAddress(),
       price: getRandomInRangeInteger(1, 100),
       type: getRandomArrayElement(TYPE),
       rooms: getRandomInRangeInteger(1, 100),
       guests: getRandomInRangeInteger(1, 100),
       checkin: getRandomArrayElement(CHECKIN),
       checkout: getRandomArrayElement(CHECKOUT),
-      features: new Array(getRandomInRangeInteger(1,6)).fill(null).map(() => getRandomArrayElement(FEATURES)),
+      features: getFeatures(),
       description: 'Абсолютно случайное сочетание слов',
-      photos: new Array(getRandomInRangeInteger(1,10)).fill(null).map(() => getRandomArrayElement(PHOTOS)),
+      photos: new Array(getRandomInRangeInteger(1, 10)).fill(null).map(() => getRandomArrayElement(PHOTOS)),
     },
     location: {
-      lat: getRandomInRangeFine(35.65000, 35.70000, 5),
-      lng: getRandomInRangeFine(139.70000, 139.80000, 5),
+      lat: locationLat,
+      lng: locationLng,
     },
   };
-};
 
+};
 // eslint-disable-next-line no-unused-vars
-const adverts = new Array(ADVERTS_NUMBER).fill(null).map(() => createAdvert());
+const adverts = [];
+let advertsNmbr = 0;
+while (advertsNmbr <= ADVERTS_NUMBER - 1) {
+  const advert = createAdvert();
+  if (adverts.length === 0) {
+    adverts.push(advert);
+    advertsNmbr++;
+  } else {
+    if (!adverts.some((elem) => elem.author.avatar === advert.author.avatar)) {
+      adverts.push(advert);
+      advertsNmbr++;
+    } else {
+      continue;
+    }
+  } if (adverts.length === ADVERTS_NUMBER) {
+    break;
+  }
+}
